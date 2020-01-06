@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ClearCell</string>
+
+    <string name="title_activity_main">MainActivity</string>
+    <string name="play_button">Play</string>
+    <string name="title_titlePage">Clear Blocks</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="scoreText">Score :     </string>
+    <string name="score">0</string>
+    <string name="gameOver">Game Over</string>
+</resources>

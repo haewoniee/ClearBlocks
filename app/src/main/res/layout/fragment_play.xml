@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.clearcell.navigation.PlayFragment"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        >
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/scoreText"
+            android:textColor="@color/white"
+            app:layout_constrainedHeight="false"
+            app:layout_constraintBottom_toTopOf="@id/cellGridView"
+            app:layout_constraintStart_toStartOf="@id/cellGridView"
+            />
+
+        <TextView
+            android:id="@+id/scoreNumTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/score"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/scoreTextView"
+            app:layout_constraintTop_toTopOf="@id/scoreTextView"
+            />
+
+        <GridView
+            android:id="@+id/cellGridView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/white"
+            android:foregroundGravity="center"
+            android:gravity="center"
+            android:numColumns="auto_fit"
+            android:padding="2dp"
+            android:stretchMode="columnWidth"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
