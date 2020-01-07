@@ -1,11 +1,12 @@
 package com.example.clearcell.navigation
 
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,8 +17,8 @@ import com.example.clearcell.R
 import com.example.clearcell.databinding.FragmentPlayBinding
 import com.example.clearcell.model.Cell
 import com.example.clearcell.model.ClearGameAdapter
+import com.example.clearcell.model.RecyclerItemClickListener
 import java.util.*
-
 
 /**
  * A simple [Fragment] subclass.
@@ -34,6 +35,7 @@ class PlayFragment : Fragment() {
     private val handler: Handler = Handler()
     private var handlerTask: Runnable? = null
     private var refreshTask: Runnable? = null
+    private var intervalTime: Long = 1000
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,25 +69,29 @@ class PlayFragment : Fragment() {
             recyclerView!!.adapter = gameAdapter
             recyclerView!!.layoutParams.width = (dm.widthPixels * 0.8).toInt()
             recyclerView!!.layoutParams.height = rowSize * cellSize + 1
+            if (scoreView == null) {
+                scoreView = binding!!.scoreNumTextView as TextView
+            }
             recyclerView!!.addOnItemTouchListener(RecyclerItemClickListener(
                 context!!,
-                recyclerView!!,
                 object : RecyclerItemClickListener.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
-                        gameAdapter.processCell(
-                            position / colSize,
-                            position - position / colSize * colSize
-                        )
+                        if (position >= 0) {
+                            val rowPos = position / colSize
+                            val colPos = position - rowPos * colSize
+                            gameAdapter.processCell(
+                                rowPos,
+                                colPos
+                            )
+                            scoreView!!.text = gameAdapter.getScore().toString()
+                        }
                     }
                 }
             ))
-        }
-        if (scoreView == null) {
-            scoreView = binding!!.scoreNumTextView
             handlerTask = object : Runnable {
                 override fun run() {
                     nextAnimation()
-                    handler.postDelayed(this, 2000)
+                    handler.postDelayed(this, intervalTime)
                 }
             }
             refreshTask = object : Runnable {
@@ -108,45 +114,11 @@ class PlayFragment : Fragment() {
                 //Game Over
                 handler.removeCallbacks(handlerTask!!)
                 handler.removeCallbacks(refreshTask!!)
-                this.view!!.findNavController()
-                    .navigate(PlayFragmentDirections.actionPlayFragmentToGameOverFragment())
+                this.view?.findNavController()
+                    ?.navigate(PlayFragmentDirections.actionPlayFragmentToGameOverFragment())
             }
         }
     }
 
-    class RecyclerItemClickListener(
-        context: Context,
-        recyclerView: RecyclerView,
-        private val listener: OnItemClickListener?
-    ) : RecyclerView.OnItemTouchListener {
-        private val mGestureDetector: GestureDetector =
-            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-                override fun onSingleTapUp(e: MotionEvent): Boolean {
-                    return true
-                }
-            })
-
-        interface OnItemClickListener {
-            fun onItemClick(view: View, position: Int)
-        }
-
-        override fun onInterceptTouchEvent(view: RecyclerView, e: MotionEvent): Boolean {
-            val childView = view.findChildViewUnder(e.x, e.y)
-            if (childView != null && listener != null && mGestureDetector.onTouchEvent(e)) {
-                try {
-                    listener.onItemClick(childView, view.getChildAdapterPosition(childView))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                return true
-            }
-            return false
-        }
-
-        override fun onTouchEvent(view: RecyclerView, motionEvent: MotionEvent) {}
-
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
-    }
 
 }
