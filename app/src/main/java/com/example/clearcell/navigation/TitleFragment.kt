@@ -30,10 +30,6 @@ class TitleFragment : Fragment() {
             false
         )
 
-//        binding.playbutton.setOnClickListener { view: View ->
-//            view.findNavController()
-//                .navigate(TitleFragmentDirections.actionTitleFragmentToPlayFragment())
-//        }
         var rect: Rect? = null
         binding.playbutton.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
@@ -62,24 +58,4 @@ class TitleFragment : Fragment() {
 
         return binding.root
     }
-
-//    recyclerView!!.addOnItemTouchListener(RecyclerItemClickListener(
-//    context!!,
-//    recyclerView!!,
-//    object : RecyclerItemClickListener.OnItemClickListener {
-//        override fun onItemClick(view: View, position: Int) {
-//            if (position >= 0)
-//            {
-//                val rowPos = position / colSize
-//                val colPos = position - rowPos * colSize
-//                gameAdapter.processCell(
-//                    rowPos,
-//                    colPos
-//                )
-//                scoreView!!.text = gameAdapter.getScore().toString()
-//            }
-//        }
-//    }
-//    ))
-
 }
