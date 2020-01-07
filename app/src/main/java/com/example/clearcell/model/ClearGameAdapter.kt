@@ -1,14 +1,12 @@
 package com.example.clearcell.model
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clearcell.R
 import kotlinx.android.synthetic.main.cell.view.*
-import kotlinx.android.synthetic.main.fragment_play.view.*
 
 class ClearGameAdapter(
     private val context: Context,
@@ -19,8 +17,8 @@ class ClearGameAdapter(
 ) : GameAdapter(context, cellList, /*rowSize,*/ colSize) {
 
     private var score: Int = 0
-    private var curRow: Int = 0
-    private val colors: Array<Int> = arrayOf<Int>(Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW)
+    private val colors: Array<Int> =
+        arrayOf<Int>(R.color.blue, R.color.red, R.color.green, R.color.yellow)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -38,13 +36,12 @@ class ClearGameAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.cellView.setBackgroundColor(cellList[position].getColor())
-        holder.scoreView.text = score.toString()
     }
 
 
     private fun rowEmpty(rowIn: Int): Boolean {
         for (i in 0 until colSize) {
-            if (getCell(rowIn, i).getColor() != Color.TRANSPARENT) {
+            if (getCell(rowIn, i) != Cell.EMPTY) {
                 return false
             }
         }
@@ -64,7 +61,7 @@ class ClearGameAdapter(
 
         if (!isGameOver()) {
             // from the second row, each row goes down by one
-            for (row in (curRow - 1) downTo 0) {
+            for (row in (rowSize - 2) downTo 0) {
                 for (col in 0 until colSize) {
                     setCell(row + 1, col, getCell(row, col))
                 }
@@ -74,7 +71,6 @@ class ClearGameAdapter(
             for (col in 0 until colSize) {
                 setCell(0, col, getNonEmptyRandomCell())
             }
-            curRow++
             return true
         }
         return false
@@ -93,7 +89,7 @@ class ClearGameAdapter(
     private fun processCell(row: Int, col: Int, color: Int, flag: Boolean): Boolean {
         //prevDir : Previous Direction. 0: own, 1: up
         //clear all connected cells with same color, using DFS
-        if (getCell(row, col).getColor() == Color.TRANSPARENT) {
+        if (getCell(row, col) == Cell.EMPTY) {
             return flag
         }
 
@@ -175,7 +171,6 @@ class ClearGameAdapter(
 
 
         var cellView = view.cellView
-        var scoreView = view.scoreNumTextView
         //    var cellView : View = view.cellView
         //    val width = view.width
         //    val height = view.height
