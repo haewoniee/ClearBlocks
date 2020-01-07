@@ -28,7 +28,6 @@ class GameOverFragment : Fragment() {
             container,
             false
         )
-//        setHasOptionsMenu(true)
         return binding.root
     }
 
