@@ -22,7 +22,7 @@ class GameOverFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         navController = this.findNavController()
-        val binding = DataBindingUtil.inflate<FragmentGameOverBinding>(
+        val binding: FragmentGameOverBinding = DataBindingUtil.inflate<FragmentGameOverBinding>(
             inflater,
             R.layout.fragment_game_over,
             container,
@@ -30,18 +30,6 @@ class GameOverFragment : Fragment() {
         )
 //        setHasOptionsMenu(true)
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//
-
     }
 
 

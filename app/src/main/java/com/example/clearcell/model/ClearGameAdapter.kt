@@ -1,54 +1,50 @@
 package com.example.clearcell.model
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.clearcell.R
+import kotlinx.android.synthetic.main.cell.view.*
+import kotlinx.android.synthetic.main.fragment_play.view.*
 
 class ClearGameAdapter(
-    private val context: Context?,
-    rowSize: Int,
-    colSize: Int,
-    cellSize: Int,
-    strategy: Int
-) : GameAdapter(rowSize, colSize, strategy) {
+    private val context: Context,
+    private var cellList: ArrayList<Cell>,
+    private val cellSize: Int,
+    private val colSize: Int,
+    private val rowSize: Int
+) : GameAdapter(context, cellList, /*rowSize,*/ colSize) {
 
     private var score: Int = 0
-    private var dpWidth: Int = 0
-    private var cellSize: Int = cellSize
     private var curRow: Int = 0
+    private val colors: Array<Int> = arrayOf<Int>(Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW)
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-//        var view : View = if (convertView != null) convertView!!.findViewById<View>(R.id.cellImageView)
-//            else LayoutInflater.from(context).inflate(R.layout.cell,null)
-        val view = LayoutInflater.from(context).inflate(R.layout.cell, null)
-
-        //view를 cell이미지뷰에 연결해주기
-        val cellView = view.findViewById<ImageView>(R.id.cellImageView)
-
-        //position에 있는 cell의 컬러를 받아 view에 설정해주기
-        val cell = cellList[position]
-        when (cell.getColor()) {
-            Cell.RED.getColor() -> cellView.setImageResource(R.color.red)
-            Cell.BLUE.getColor() -> cellView.setImageResource(R.color.blue)
-            Cell.GREEN.getColor() -> cellView.setImageResource(R.color.green)
-            Cell.YELLOW.getColor() -> cellView.setImageResource(R.color.yellow)
-            else -> cellView.setImageResource(R.color.transparent)
+        val cellLayout: View = LayoutInflater.from(context).inflate(
+            R.layout.cell,
+            parent,
+            false
+        )
+        if (cellLayout.layoutParams.height == 0 || cellLayout.layoutParams.width == 0) {
+            cellLayout.layoutParams.height = cellSize
+            cellLayout.layoutParams.width = cellSize
         }
-        //cell 사이즈 설정하기
-        if (convertView != null) {
-            cellView.layoutParams.height = cellSize
-            cellView.layoutParams.width = cellSize
-        }
-        return view
+        return ViewHolder(cellLayout)
     }
 
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.cellView.setBackgroundColor(cellList[position].getColor())
+        holder.scoreView.text = score.toString()
+    }
+
+
     private fun rowEmpty(rowIn: Int): Boolean {
-        for (i in 0 until getColSize()) {
-            if (getCell(rowIn, i) != Cell.EMPTY) {
+        for (i in 0 until colSize) {
+            if (getCell(rowIn, i).getColor() != Color.TRANSPARENT) {
                 return false
             }
         }
@@ -57,7 +53,7 @@ class ClearGameAdapter(
 
     override fun isGameOver(): Boolean {
         //Game Over when last row is not empty
-        return !rowEmpty(getRowSize()-1)
+        return !rowEmpty(rowSize - 1)
     }
 
     override fun getScore(): Int {
@@ -69,15 +65,14 @@ class ClearGameAdapter(
         if (!isGameOver()) {
             // from the second row, each row goes down by one
             for (row in (curRow - 1) downTo 0) {
-                for (col in 0 until getColSize()) {
-                    setUpCell(row + 1, col, getCell(row, col))
+                for (col in 0 until colSize) {
+                    setCell(row + 1, col, getCell(row, col))
                 }
             }
 
             //set up new row on the top
-            for (col in 0 until getColSize()) {
-//                addItem(getNonEmptyRandomCell())
-                setUpCell(0, col, getNonEmptyRandomCell())
+            for (col in 0 until colSize) {
+                setCell(0, col, getNonEmptyRandomCell())
             }
             curRow++
             return true
@@ -85,46 +80,106 @@ class ClearGameAdapter(
         return false
     }
 
-    override fun processCell(row: Int, col: Int) : Boolean{
+
+    override fun processCell(row: Int, col: Int): Boolean {
         val color = getCell(row, col).getColor()
-        return processCell(row, col, color, 0, false)
+        val success = processCell(row, col, color, false)
+        if (success) {
+            cleanUp()
+        }
+        return success
     }
 
-    private fun processCell(row: Int, col: Int, color: Int, prevDir : Int, flag: Boolean) : Boolean{
+    private fun processCell(row: Int, col: Int, color: Int, flag: Boolean): Boolean {
         //prevDir : Previous Direction. 0: own, 1: up
         //clear all connected cells with same color, using DFS
-        if (getCell(row, col) == Cell.EMPTY) {
+        if (getCell(row, col).getColor() == Color.TRANSPARENT) {
             return flag
         }
 
         //clear this cell
-        setUpCell(row, col, Cell.EMPTY)
+        setCell(row, col, Cell.EMPTY)
         score++
 
         //TODO: Set up previous cell
-//        if ()
 
         //UP
-        if (row < getRowSize() - 1 && getCell(row + 1, col).getColor() == color) {
-            processCell(row + 1, col, color, 1, true)
+        if (row < rowSize - 1 && getCell(row + 1, col).getColor() == color) {
+            processCell(row + 1, col, color, true)
         }
 
         //DOWN
         if (row > 0 && getCell(row - 1, col).getColor() == color) {
-            processCell(row - 1, col, color, -1, true)
+            processCell(row - 1, col, color, true)
         }
 
         //RIGHT
-        if (col < getColSize() - 1 && getCell(row, col + 1).getColor() == color) {
-            processCell(row, col + 1, color, 0, true)
+        if (col < colSize - 1 && getCell(row, col + 1).getColor() == color) {
+            processCell(row, col + 1, color, true)
         }
 
         //LEFT
         if (col > 0 && getCell(row, col - 1).getColor() == color) {
-            processCell(row, col - 1, color, 0, true)
+            processCell(row, col - 1, color, true)
         }
 
         return true
+    }
+
+    private fun cleanUp() {
+//        for (c in 0 until colSize)
+//        {
+//            for (r in 0 until rowSize - 1)
+//            {
+//                if (getCell(r, c) == Cell.EMPTY)
+//                {
+//                    setCell(r, c, getCell(r+1, c))
+//                    setCell(r+1, c, Cell.EMPTY)
+//                }
+//            }
+//
+//        }
+//        notifyDataSetChanged()
+    }
+
+/*
+//    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+//        var holder: RecyclerView.ViewHolder
+//
+//        val view = LayoutInflater.from(context).inflate(R.layout.cell, null)
+//
+//        //view를 cell이미지뷰에 연결해주기
+//        val cellView = view.findViewById<ImageView>(R.id.cellImageView)
+//
+//        //position에 있는 cell의 컬러를 받아 view에 설정해주기
+//        val cell = cellList[position]
+//        when (cell.getColor()) {
+//            Cell.RED.getColor() -> cellView.setImageResource(R.color.red)
+//            Cell.BLUE.getColor() -> cellView.setImageResource(R.color.blue)
+//            Cell.GREEN.getColor() -> cellView.setImageResource(R.color.green)
+//            Cell.YELLOW.getColor() -> cellView.setImageResource(R.color.yellow)
+//            else -> cellView.setImageResource(R.color.transparent)
+//        }
+//        //cell 사이즈 설정하기
+//        if (convertView != null) {
+//            holder = RecyclerView.ViewHolder()
+//            cellView.layoutParams.height = cellSize
+//            cellView.layoutParams.width = cellSize
+//        }
+//        return view
+//    }
+*/
+
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+
+        var cellView = view.cellView
+        var scoreView = view.scoreNumTextView
+        //    var cellView : View = view.cellView
+        //    val width = view.width
+        //    val height = view.height
+        //    var color = (view.background as ColorDrawable).color
     }
 
 }

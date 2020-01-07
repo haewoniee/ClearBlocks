@@ -3,7 +3,7 @@ package com.example.clearcell.model
 import android.graphics.Color
 import kotlin.random.Random
 
-enum class Cell (private var colorIn: Int, private var colorName: String){
+enum class Cell(private var colorIn: Int, private var colorName: String) {
     RED(Color.RED, "R"), GREEN(Color.GREEN, "G"),
     BLUE(Color.BLUE, "B"), YELLOW(Color.YELLOW, "Y"),
     EMPTY(Color.TRANSPARENT, "E");

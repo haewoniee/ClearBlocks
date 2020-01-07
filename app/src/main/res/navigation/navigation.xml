@@ -36,11 +36,5 @@
         android:id="@+id/gameOverFragment"
         android:name="com.example.clearcell.navigation.GameOverFragment"
         android:label="GameOverFragment"
-        >
-        <action
-            android:id="@+id/action_gameOverFragment_to_titleFragment"
-            app:destination="@id/titleFragment"
-            app:popUpToInclusive="false"
-            />
-    </fragment>
+        />
 </navigation>
