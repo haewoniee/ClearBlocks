@@ -20,8 +20,8 @@
             android:text="@string/scoreText"
             android:textColor="@color/white"
             app:layout_constrainedHeight="false"
-            app:layout_constraintBottom_toTopOf="@id/cellGridView"
-            app:layout_constraintStart_toStartOf="@id/cellGridView"
+            app:layout_constraintBottom_toTopOf="@id/cellGridRV"
+            app:layout_constraintStart_toStartOf="@id/cellGridRV"
             />
 
         <TextView
@@ -35,21 +35,30 @@
             app:layout_constraintTop_toTopOf="@id/scoreTextView"
             />
 
-        <GridView
-            android:id="@+id/cellGridView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cellGridRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@color/white"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:numColumns="auto_fit"
-            android:padding="2dp"
-            android:stretchMode="columnWidth"
+            android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            >
+
+            <!--            <GridView-->
+            <!--                android:id="@+id/cellGridView"-->
+            <!--                android:layout_width="fill_parent"-->
+            <!--                android:layout_height="fill_parent"-->
+            <!--                android:background="@color/white"-->
+            <!--                android:foregroundGravity="center"-->
+            <!--                android:gravity="center"-->
+            <!--                android:numColumns="auto_fit"-->
+            <!--                android:padding="2dp"-->
+            <!--                android:stretchMode="columnWidth"-->
+            <!--                />-->
+        </androidx.recyclerview.widget.RecyclerView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

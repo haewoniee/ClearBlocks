@@ -1,17 +1,17 @@
 package com.example.clearcell.navigation
 
 
-import android.graphics.Color
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.GridView
+import android.view.*
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.clearcell.R
 import com.example.clearcell.databinding.FragmentPlayBinding
 import com.example.clearcell.model.Cell
@@ -24,104 +24,129 @@ import java.util.*
  */
 class PlayFragment : Fragment() {
     private lateinit var gameAdapter: ClearGameAdapter
-    private var rowSize : Int = 0
-    private var colSize : Int = 8
-    private var cellSize : Int = 0
-    private val strategy = 1
+    private var rowSize: Int = 0
+    private var colSize: Int = 8
+    private var cellSize: Int = 0
     private var binding: FragmentPlayBinding? = null
-    private var mTimer : Timer = Timer()
-    private var cellGridView : GridView? = null
-    private var scoreView : TextView? = null
-
+    private var recyclerView: RecyclerView? = null
+    private var scoreView: TextView? = null
+    private val cellList: ArrayList<Cell> = arrayListOf<Cell>()
+    private val handler: Handler = Handler()
+    private var handlerTask: Runnable? = null
+    private var refreshTask: Runnable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val dm : DisplayMetrics = context!!.resources.displayMetrics
+        val dm: DisplayMetrics = requireContext().resources.displayMetrics
 
-        if (binding == null)
-        {
-            cellSize = (dm.widthPixels * 0.8 / colSize).toInt()
-            rowSize = (dm.heightPixels * 0.8 / cellSize).toInt()
-            gameAdapter = ClearGameAdapter(
-                context,
-                rowSize,
-                colSize,
-                cellSize,
-                strategy
-            )
-            for (i in 0 until rowSize*colSize)
-            {
-                gameAdapter.addItem(Cell.EMPTY)
-            }
-//            setHasOptionsMenu(true)
+        if (binding == null) {
             binding = DataBindingUtil.inflate<FragmentPlayBinding>(
                 inflater, R.layout.fragment_play,
                 container, false
             )
+            cellSize = (dm.widthPixels * 0.8 / colSize).toInt()
+            rowSize = (dm.heightPixels * 0.8 / cellSize).toInt()
+            for (i in 0 until rowSize * colSize) {
+                cellList.add(Cell.EMPTY)
+            }
+
+            gameAdapter = ClearGameAdapter(
+                requireContext(),
+                cellList,
+                cellSize,
+                colSize,
+                rowSize
+            )
 
         }
-        if (cellGridView == null) {
-            cellGridView = binding!!.cellGridView
-            cellGridView!!.adapter = gameAdapter
-            cellGridView!!.columnWidth = (dm.widthPixels * 0.8 / colSize).toInt()
-            cellGridView!!.numColumns = colSize
-            cellGridView!!.layoutParams.width = (dm.widthPixels * 0.8).toInt()
-            cellGridView!!.layoutParams.height = rowSize * cellSize + 1
-            scoreView = binding!!.scoreNumTextView
-            cellGridView!!.setOnItemClickListener { _, _, position, _ ->
-                if (gameAdapter.getCell(position/colSize, position - position/colSize * colSize).getColor() != Color.TRANSPARENT)
-                {
-                    if (gameAdapter.processCell(position/colSize, position - position/colSize * colSize))
-                    {
-                        fragmentManager!!.beginTransaction().detach(this).attach(this).commit()
+        if (recyclerView == null) {
+            recyclerView = binding!!.cellGridRV as RecyclerView
+            recyclerView!!.layoutManager = GridLayoutManager(requireContext(), colSize)
+            recyclerView!!.adapter = gameAdapter
+            recyclerView!!.layoutParams.width = (dm.widthPixels * 0.8).toInt()
+            recyclerView!!.layoutParams.height = rowSize * cellSize + 1
+            recyclerView!!.addOnItemTouchListener(RecyclerItemClickListener(
+                context!!,
+                recyclerView!!,
+                object : RecyclerItemClickListener.OnItemClickListener {
+                    override fun onItemClick(view: View, position: Int) {
+                        gameAdapter.processCell(
+                            position / colSize,
+                            position - position / colSize * colSize
+                        )
                     }
-                    scoreView!!.text = gameAdapter.getScore().toString()
                 }
-            }
-            mTimer.scheduleAtFixedRate(object : TimerTask() {
+            ))
+        }
+        if (scoreView == null) {
+            scoreView = binding!!.scoreNumTextView
+            handlerTask = object : Runnable {
                 override fun run() {
                     nextAnimation()
+                    handler.postDelayed(this, 2000)
                 }
-            }, 1000, 500)
+            }
+            refreshTask = object : Runnable {
+                override fun run() {
+                    gameAdapter.notifyDataSetChanged()
+                    handler.postDelayed(this, 100)
+                }
+            }
+            handler.post(handlerTask!!)
+            handler.post(refreshTask!!)
         }
         return binding!!.root
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        mTimer.schedule(object: TimerTask() {
-//            override fun run()
-//            {
-//                nextAnimation()
-//            }
-//        }, 1000)
-
-        //TODO: cell 클릭시 사라지게 하기
-//        view.requestLayout()
-
-
-    }
-
-    private fun nextAnimation()
-    {
-        if (binding != null)
-        {
-            if (gameAdapter.nextAnimationStep())
-            {
-                this.fragmentManager!!.beginTransaction().detach(this).attach(this).commit()
-//                fragmentManager!!.beginTransaction().detach(this).attach(this).commit()
-            }
-            else
+    private fun nextAnimation() {
+        if (binding != null) {
+            if (!gameAdapter.nextAnimationStep())
             {
                 //Game Over
-                mTimer!!.cancel()
+                handler.removeCallbacks(handlerTask!!)
+                handler.removeCallbacks(refreshTask!!)
                 this.view!!.findNavController()
                     .navigate(PlayFragmentDirections.actionPlayFragmentToGameOverFragment())
             }
         }
+    }
+
+    class RecyclerItemClickListener(
+        context: Context,
+        recyclerView: RecyclerView,
+        private val listener: OnItemClickListener?
+    ) : RecyclerView.OnItemTouchListener {
+        private val mGestureDetector: GestureDetector =
+            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    return true
+                }
+            })
+
+        interface OnItemClickListener {
+            fun onItemClick(view: View, position: Int)
+        }
+
+        override fun onInterceptTouchEvent(view: RecyclerView, e: MotionEvent): Boolean {
+            val childView = view.findChildViewUnder(e.x, e.y)
+            if (childView != null && listener != null && mGestureDetector.onTouchEvent(e)) {
+                try {
+                    listener.onItemClick(childView, view.getChildAdapterPosition(childView))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                return true
+            }
+            return false
+        }
+
+        override fun onTouchEvent(view: RecyclerView, motionEvent: MotionEvent) {}
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
     }
 
 }
