@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clearcell.R
 import kotlinx.android.synthetic.main.cell.view.*
@@ -18,8 +19,6 @@ class ClearGameAdapter(
 ) : GameAdapter(context, cellList, /*rowSize,*/ colSize) {
 
     private var score: Int = 0
-    private val colors: Array<Int> =
-        arrayOf<Int>(R.color.blue, R.color.red, R.color.green, R.color.yellow)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -62,6 +61,7 @@ class ClearGameAdapter(
                 for (col in 0 until colSize) {
                     setCell(row + 1, col, getCell(row, col))
                 }
+
             }
 
             //set up new row on the top
@@ -92,8 +92,8 @@ class ClearGameAdapter(
 
         //clear this cell
         setCell(row, col, Cell.EMPTY)
-        notifyItemChanged(row * colSize + col, "click")
         score++
+        notifyItemChanged(row * colSize + col, "click")
 
         //TODO: Set up previous cell
 
@@ -121,18 +121,33 @@ class ClearGameAdapter(
     }
 
     private fun cleanUp() {
-//        for (c in 0 until colSize)
-//        {
-//            for (r in 0 until rowSize - 1)
-//            {
-//                if (getCell(r, c) == Cell.EMPTY)
-//                {
+
+        for (c in 0 until colSize) {
+            for (r1 in 0 until rowSize - 1) {
+                if (getCell(r1, c) == Cell.EMPTY)
+                //빈 셀을 찾으면 다음에 셀이 더이상 없거나 비지 않은 셀을 찾을때까지 계속함
+                {
+                    var nextPos = r1
+                    for (r2 in r1 until rowSize - 1) {
+                        if (getCell(r2, c) != Cell.EMPTY) {
+                            nextPos = r2
+                            break
+                        }
+                    }
+                    if (nextPos > r1) {
+                        for (r3 in 0..(nextPos - r1)) {
+                            setCell(r3 + r1, c, getCell(nextPos + r3, c))
+                            setCell(nextPos + r3, c, Cell.EMPTY)
+                            notifyItemChanged(r3 + r1, c)
+                            notifyItemChanged(nextPos + r3, c)
+                        }
+                    }
 //                    setCell(r, c, getCell(r+1, c))
 //                    setCell(r+1, c, Cell.EMPTY)
-//                }
-//            }
+                }
+            }
 //
-//        }
+        }
 //        notifyDataSetChanged()
     }
 
@@ -166,9 +181,7 @@ class ClearGameAdapter(
 
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-
-        var cellView = view.cellView
+        var cellView: AppCompatTextView = view.cellView as AppCompatTextView
         //    var cellView : View = view.cellView
         //    val width = view.width
         //    val height = view.height
@@ -185,7 +198,6 @@ class ClearGameAdapter(
         } else {
             for (payload in payloads) {
                 if (payload is String && payload == "click") {
-//                    holder.cellView.setBackgroundColor(cellList[position].getColor())
                     holder.cellView.animate()
                         .setDuration(500)
                         .setInterpolator(OvershootInterpolator())

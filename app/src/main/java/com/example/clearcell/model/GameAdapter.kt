@@ -22,7 +22,6 @@ abstract class GameAdapter(
     }
 
 
-    //
     protected fun setCell(row: Int, col: Int, cell: Cell) {
         cellList[row * colSize + col] = cell
 

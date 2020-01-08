@@ -35,7 +35,7 @@ class PlayFragment : Fragment() {
     private val cellList: ArrayList<Cell> = arrayListOf<Cell>()
     private val handler: Handler = Handler()
     private var handlerTask: Runnable? = null
-    //    private var refreshTask: Runnable? = null
+    private var refreshTask: Runnable? = null
     private var intervalTime: Long = 1300
 
     override fun onCreateView(
@@ -93,18 +93,18 @@ class PlayFragment : Fragment() {
             handlerTask = object : Runnable {
                 override fun run() {
                     nextAnimation()
-                    gameAdapter.notifyDataSetChanged()
+//                    gameAdapter.notifyDataSetChanged()
                     handler.postDelayed(this, intervalTime)
                 }
             }
-//            refreshTask = object : Runnable {
-//                override fun run() {
-////                    gameAdapter.notifyDataSetChanged()
-//                    handler.postDelayed(this, 0)
-//                }
-//            }
+            refreshTask = object : Runnable {
+                override fun run() {
+                    gameAdapter.notifyDataSetChanged()
+                    handler.postDelayed(this, 300)
+                }
+            }
             handler.post(handlerTask!!)
-//            handler.post(refreshTask!!)
+            handler.post(refreshTask!!)
         }
         return binding!!.root
     }
@@ -116,7 +116,7 @@ class PlayFragment : Fragment() {
             {
                 //Game Over
                 handler.removeCallbacks(handlerTask!!)
-//                handler.removeCallbacks(refreshTask!!)
+                handler.removeCallbacks(refreshTask!!)
                 this.view?.findNavController()
                     ?.navigate(PlayFragmentDirections.actionPlayFragmentToGameOverFragment())
             }
