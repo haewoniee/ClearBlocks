@@ -36,7 +36,7 @@ class TitleFragment : Fragment() {
                 MotionEvent.ACTION_DOWN -> {
                     rect = Rect(view.left, view.top, view.right, view.bottom)
                     Log.d("플레이버튼 액션", "DOWN")
-                    binding.playbutton.setImageResource(R.drawable.play_button_clicked)
+                    binding.playbutton.setImageResource(R.drawable.ic_play_button_clicked)
                 }
                 MotionEvent.ACTION_UP -> {
                     if (rect!!.contains(
@@ -50,7 +50,7 @@ class TitleFragment : Fragment() {
                     } else {
                         Log.d("플레이버튼 액션", "UP: 버튼 취소")
                     }
-                    binding.playbutton.setImageResource(R.drawable.play_button_normal)
+                    binding.playbutton.setImageResource(R.drawable.ic_play_button_normal)
                 }
             }
             true
