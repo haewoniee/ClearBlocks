@@ -76,48 +76,60 @@ class ClearGameAdapter(
 
     override fun processCell(row: Int, col: Int): Boolean {
         val color = getCell(row, col).getColor()
-        val success = processCell(row, col, color, false)
-        if (success) {
+        val processed: ArrayList<Pair<Int, Cell>> = arrayListOf<Pair<Int, Cell>>()
+        processCell(row, col, color, processed)
+        var success = false
+        if (processed.size >= 2) {
+            for (pair: Pair<Int, Cell> in processed) {
+                val position = pair.first
+                val row = position / colSize
+                val col = position - row * colSize
+                setCell(row, col, Cell.EMPTY)
+                notifyItemChanged(position, "click")
+            }
             cleanUp()
+            success = true
+        } else if (processed.size == 1) {
+            val position = processed[0].first
+            val color = processed[0].second
+            val row = position / colSize
+            val col = position - row * colSize
+            setCell(row, col, color)
         }
         return success
     }
 
-    private fun processCell(row: Int, col: Int, color: Int, flag: Boolean): Boolean {
-        //prevDir : Previous Direction. 0: own, 1: up
+    private fun processCell(row: Int, col: Int, color: Int, processed: ArrayList<Pair<Int, Cell>>) {
+//        prevDir : Previous Direction. 0: origin, 1: up, -1: down, 2: right, -2: left
         //clear all connected cells with same color, using DFS
         if (getCell(row, col) == Cell.EMPTY) {
-            return flag
+            return
         }
-
         //clear this cell
+        processed.add(Pair(row * colSize + col, getCell(row, col)))
         setCell(row, col, Cell.EMPTY)
         score++
-        notifyItemChanged(row * colSize + col, "click")
-
-        //TODO: Set up previous cell
 
         //UP
         if (row < rowSize - 1 && getCell(row + 1, col).getColor() == color) {
-            processCell(row + 1, col, color, true)
+            processCell(row + 1, col, color, processed)
         }
 
         //DOWN
         if (row > 0 && getCell(row - 1, col).getColor() == color) {
-            processCell(row - 1, col, color, true)
+            processCell(row - 1, col, color, processed)
         }
 
-        //RIGHT
+        //RIGHT: Only process if prev dir isn't from left
         if (col < colSize - 1 && getCell(row, col + 1).getColor() == color) {
-            processCell(row, col + 1, color, true)
+            processCell(row, col + 1, color, processed)
         }
 
         //LEFT
         if (col > 0 && getCell(row, col - 1).getColor() == color) {
-            processCell(row, col - 1, color, true)
+            processCell(row, col - 1, color, processed)
         }
-
-        return true
+        return
     }
 
     private fun cleanUp() {

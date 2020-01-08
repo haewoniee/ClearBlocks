@@ -36,7 +36,7 @@ class PlayFragment : Fragment() {
     private val handler: Handler = Handler()
     private var handlerTask: Runnable? = null
     private var refreshTask: Runnable? = null
-    private var intervalTime: Long = 1300
+    private var intervalTime: Long = 2000
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
