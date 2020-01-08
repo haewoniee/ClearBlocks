@@ -14,7 +14,7 @@
         <action
             android:id="@+id/action_titleFragment_to_playFragment"
             app:destination="@id/playFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:enterAnim="@anim/nav_default_enter_anim"
             app:popUpToInclusive="false"
             />
     </fragment>
@@ -27,7 +27,7 @@
         <action
             android:id="@+id/action_playFragment_to_gameOverFragment"
             app:destination="@id/gameOverFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popUpTo="@+id/titleFragment"
             app:popUpToInclusive="false"
             />
@@ -36,5 +36,11 @@
         android:id="@+id/gameOverFragment"
         android:name="com.example.clearcell.navigation.GameOverFragment"
         android:label="GameOverFragment"
-        />
+        >
+        <action
+            android:id="@+id/action_gameOverFragment_to_playFragment"
+            app:destination="@id/playFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            />
+    </fragment>
 </navigation>

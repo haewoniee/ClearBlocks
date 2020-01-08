@@ -154,43 +154,10 @@ class ClearGameAdapter(
                             notifyItemChanged(nextPos + r3, c)
                         }
                     }
-//                    setCell(r, c, getCell(r+1, c))
-//                    setCell(r+1, c, Cell.EMPTY)
                 }
             }
-//
         }
-//        notifyDataSetChanged()
     }
-
-/*
-//    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-//        var holder: RecyclerView.ViewHolder
-//
-//        val view = LayoutInflater.from(context).inflate(R.layout.cell, null)
-//
-//        //view를 cell이미지뷰에 연결해주기
-//        val cellView = view.findViewById<ImageView>(R.id.cellImageView)
-//
-//        //position에 있는 cell의 컬러를 받아 view에 설정해주기
-//        val cell = cellList[position]
-//        when (cell.getColor()) {
-//            Cell.RED.getColor() -> cellView.setImageResource(R.color.red)
-//            Cell.BLUE.getColor() -> cellView.setImageResource(R.color.blue)
-//            Cell.GREEN.getColor() -> cellView.setImageResource(R.color.green)
-//            Cell.YELLOW.getColor() -> cellView.setImageResource(R.color.yellow)
-//            else -> cellView.setImageResource(R.color.transparent)
-//        }
-//        //cell 사이즈 설정하기
-//        if (convertView != null) {
-//            holder = RecyclerView.ViewHolder()
-//            cellView.layoutParams.height = cellSize
-//            cellView.layoutParams.width = cellSize
-//        }
-//        return view
-//    }
-*/
-
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var cellView: AppCompatTextView = view.cellView as AppCompatTextView

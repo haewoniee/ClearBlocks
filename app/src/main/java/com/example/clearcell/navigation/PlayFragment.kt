@@ -51,9 +51,13 @@ class PlayFragment : Fragment() {
             )
             cellSize = (dm.widthPixels * 0.8 / colSize).toInt()
             rowSize = (dm.heightPixels * 0.8 / cellSize).toInt()
+
             for (i in 0 until rowSize * colSize) {
                 cellList.add(Cell.EMPTY)
             }
+
+            recyclerView = binding!!.cellGridRV as RecyclerView
+            recyclerView!!.layoutManager = GridLayoutManager(requireContext(), colSize)
 
             gameAdapter = ClearGameAdapter(
                 requireContext(),
@@ -62,11 +66,6 @@ class PlayFragment : Fragment() {
                 colSize,
                 rowSize
             )
-
-        }
-        if (recyclerView == null) {
-            recyclerView = binding!!.cellGridRV as RecyclerView
-            recyclerView!!.layoutManager = GridLayoutManager(requireContext(), colSize)
             recyclerView!!.adapter = gameAdapter
             recyclerView!!.layoutParams.width = (dm.widthPixels * 0.8).toInt()
             recyclerView!!.layoutParams.height = rowSize * cellSize + 1
@@ -93,7 +92,6 @@ class PlayFragment : Fragment() {
             handlerTask = object : Runnable {
                 override fun run() {
                     nextAnimation()
-//                    gameAdapter.notifyDataSetChanged()
                     handler.postDelayed(this, intervalTime)
                 }
             }

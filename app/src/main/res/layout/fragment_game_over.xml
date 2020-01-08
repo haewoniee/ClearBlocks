@@ -12,15 +12,86 @@
 
 
         <TextView
-            android:id="@+id/gameOverView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:id="@+id/gameOverTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="70dp"
+            android:gravity="bottom|center_horizontal"
             android:text="@string/gameOver"
             android:textSize="100sp"
+            app:layout_constraintBottom_toTopOf="@id/scoreTextView"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|end"
+            android:text="@string/scoreText"
+            android:textColor="@color/red"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/playAgainText"
+            app:layout_constraintEnd_toStartOf="@id/scoreNumTextView"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+
+        <TextView
+            android:id="@+id/scoreNumTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/score"
+            android:textColor="@color/red"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/playAgainText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/scoreTextView"
+            app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+
+        <TextView
+            android:id="@+id/playAgainText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="@string/playAgain"
+            android:textSize="@dimen/title_size"
+            app:layout_constraintBottom_toTopOf="@id/playAgainImageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scoreTextView"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+
+        <ImageView
+            android:id="@+id/playAgainImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/app_name"
+            android:foregroundGravity="top"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playAgainText"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.4"
+            app:srcCompat="@drawable/ic_play_button_normal"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
