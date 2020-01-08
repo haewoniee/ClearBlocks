@@ -72,7 +72,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/play_button_normal"
+                    android:src="@drawable/ic_play_button_normal"
                     app:layout_constraintBottom_toBottomOf="@id/titleImage"
                     app:layout_constraintEnd_toEndOf="@id/titleImage"
 

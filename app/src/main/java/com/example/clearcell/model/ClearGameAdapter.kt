@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clearcell.R
 import kotlinx.android.synthetic.main.cell.view.*
@@ -32,10 +33,6 @@ class ClearGameAdapter(
             cellLayout.layoutParams.width = cellSize
         }
         return ViewHolder(cellLayout)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.cellView.setBackgroundColor(cellList[position].getColor())
     }
 
 
@@ -95,6 +92,7 @@ class ClearGameAdapter(
 
         //clear this cell
         setCell(row, col, Cell.EMPTY)
+        notifyItemChanged(row * colSize + col, "click")
         score++
 
         //TODO: Set up previous cell
@@ -177,4 +175,23 @@ class ClearGameAdapter(
         //    var color = (view.background as ColorDrawable).color
     }
 
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.cellView.setBackgroundColor(cellList[position].getColor())
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            for (payload in payloads) {
+                if (payload is String && payload == "click") {
+//                    holder.cellView.setBackgroundColor(cellList[position].getColor())
+                    holder.cellView.animate()
+                        .setDuration(500)
+                        .setInterpolator(OvershootInterpolator())
+                        .alpha(0f)
+                }
+            }
+        }
+    }
 }
