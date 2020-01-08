@@ -67,8 +67,8 @@
 
                 <ImageView
                     android:id="@+id/playbutton"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/play_button_normal"
                     app:layout_constraintBottom_toBottomOf="@id/titleImage"
@@ -76,7 +76,6 @@
 
                     app:layout_constraintStart_toStartOf="@id/titleImage"
                     app:layout_constraintTop_toTopOf="@id/titleImage"
-                    app:layout_constraintWidth_percent="0.5"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

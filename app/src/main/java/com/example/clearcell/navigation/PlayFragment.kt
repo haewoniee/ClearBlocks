@@ -35,7 +35,7 @@ class PlayFragment : Fragment() {
     private val handler: Handler = Handler()
     private var handlerTask: Runnable? = null
     private var refreshTask: Runnable? = null
-    private var intervalTime: Long = 1000
+    private var intervalTime: Long = 1300
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,8 +74,8 @@ class PlayFragment : Fragment() {
             }
             recyclerView!!.addOnItemTouchListener(RecyclerItemClickListener(
                 context!!,
-                object : RecyclerItemClickListener.OnItemClickListener {
-                    override fun onItemClick(view: View, position: Int) {
+                object : RecyclerItemClickListener.OnItemTouchListener {
+                    override fun onItemTouch(view: View, position: Int) {
                         if (position >= 0) {
                             val rowPos = position / colSize
                             val colPos = position - rowPos * colSize
@@ -97,7 +97,7 @@ class PlayFragment : Fragment() {
             refreshTask = object : Runnable {
                 override fun run() {
                     gameAdapter.notifyDataSetChanged()
-                    handler.postDelayed(this, 100)
+                    handler.postDelayed(this, 0)
                 }
             }
             handler.post(handlerTask!!)
